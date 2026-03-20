@@ -87,6 +87,7 @@ img{max-width:100%;display:block}
 .hero-title{
     font-size:clamp(32px,4.5vw,52px);font-weight:700;line-height:1.1;letter-spacing:-1px;
     text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    will-change:transform,opacity;
 }
 .hero-subtitle{font-size:12px;font-weight:300;margin-top:10px;opacity:.55}
 .hero-stats{display:flex;gap:18px;margin-top:6px}
@@ -111,6 +112,9 @@ img{max-width:100%;display:block}
     object-fit:contain;
     will-change: transform, opacity;
     filter:drop-shadow(0 18px 50px rgba(0,0,0,.5));
+    -webkit-backface-visibility:hidden;
+    backface-visibility:hidden;
+    transform-style:preserve-3d;
 }
 
 /* Smaller trucks — image 2, 4, 5 */

@@ -1,7 +1,6 @@
 // ============ GSAP + OBSERVER — DISCRETE SCROLL TRANSITIONS ============
 
 gsap.registerPlugin(Observer);
-gsap.defaults({ ease: 'power3.out', overwrite: 'auto' });
 
 // ============ STATE CONFIG ============
 const STATES = [
@@ -16,6 +15,7 @@ const STATES = [
 let currentIndex = 0;
 let transitioning = false;
 let prevTruckIndex = -1;
+let direction = 1; // 1 = forward, -1 = backward
 
 // ============ DOM REFS ============
 const allStates    = document.querySelectorAll('.state');
@@ -34,23 +34,21 @@ const splashFill   = document.getElementById('splashFill');
 
 // ============ INITIAL SETUP ============
 gsap.set(trucks, { xPercent: 40, yPercent: -50, scale: 0.5, opacity: 0, top: '50%', left: '50%' });
-gsap.set([heroTitle, heroSubtitle], { y: 40, opacity: 0 });
-gsap.set([heroDesc, buyBtn], { y: 20, opacity: 0 });
-gsap.set(navbar, { y: -30, opacity: 0 });
+gsap.set([heroTitle, heroSubtitle], { y: 60, opacity: 0 });
+gsap.set([heroDesc, buyBtn], { y: 30, opacity: 0 });
+gsap.set(navbar, { y: -40, opacity: 0 });
 gsap.set(heroStats, { scale: 0, opacity: 0 });
-gsap.set(orbit, { opacity: 0, scale: 0.8 });
+gsap.set(orbit, { opacity: 0, scale: 0.7 });
 
 // ============ SPLASH — LIQUID FILL + AUTO TRANSITION ============
 const splashTl = gsap.timeline({ delay: 0.3 });
 
-// Liquid fill from left to right
 splashTl.to(splashFill, {
     clipPath: 'inset(0 0% 0 0)',
     duration: 1.6,
     ease: 'power2.inOut'
 });
 
-// Hold, then auto-transition to hero
 splashTl.call(() => {
     goTo(1);
 }, null, '+=0.4');
@@ -58,14 +56,14 @@ splashTl.call(() => {
 // ============ TRANSITION HELPERS ============
 function showState(stateEl) {
     gsap.to(stateEl, {
-        opacity: 1, scale: 1, duration: 0.8, ease: 'power2.out',
+        opacity: 1, scale: 1, duration: 1.2, ease: 'expo.out',
         onStart: () => { stateEl.style.pointerEvents = 'auto'; }
     });
 }
 
 function hideState(stateEl) {
     gsap.to(stateEl, {
-        opacity: 0, scale: 0.97, duration: 0.6, ease: 'power2.in',
+        opacity: 0, scale: 0.95, duration: 0.8, ease: 'power3.inOut',
         onComplete: () => { stateEl.style.pointerEvents = 'none'; }
     });
 }
@@ -73,32 +71,38 @@ function hideState(stateEl) {
 // ============ HERO ENTRANCE TIMELINE ============
 function heroEntrance() {
     const tl = gsap.timeline();
-    tl.to(navbar, { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out' })
-      .to(heroTitle, { y: 0, opacity: 1, duration: 0.8, ease: 'back.out(1.2)' }, '-=0.3')
-      .to(heroSubtitle, { y: 0, opacity: 0.55, duration: 0.6 }, '-=0.5')
-      .to(heroStats, { scale: 1, opacity: 1, duration: 0.5, stagger: 0.08, ease: 'back.out(2)' }, '-=0.4')
-      .to(orbit, { opacity: 1, scale: 1, duration: 0.7 }, '-=0.5')
-      .to([heroDesc, buyBtn], { y: 0, opacity: 1, duration: 0.5, stagger: 0.1 }, '-=0.4');
+    tl.to(navbar, { y: 0, opacity: 1, duration: 0.8, ease: 'expo.out' })
+      .to(heroTitle, { y: 0, opacity: 1, duration: 1.0, ease: 'expo.out' }, '-=0.5')
+      .to(heroSubtitle, { y: 0, opacity: 0.55, duration: 0.8, ease: 'expo.out' }, '-=0.7')
+      .to(heroStats, { scale: 1, opacity: 1, duration: 0.7, stagger: 0.1, ease: 'back.out(1.5)' }, '-=0.5')
+      .to(orbit, { opacity: 1, scale: 1, duration: 1.0, ease: 'expo.out' }, '-=0.6')
+      .to([heroDesc, buyBtn], { y: 0, opacity: 1, duration: 0.7, stagger: 0.12, ease: 'expo.out' }, '-=0.6');
     return tl;
 }
 
 // ============ TRUCK TRANSITION ============
-function truckTransition(newIndex, oldIndex) {
+function truckTransition(newIndex, oldIndex, dir) {
     const tl = gsap.timeline();
     const newTruck = trucks[newIndex];
+
+    // Exit direction based on scroll direction
+    const exitX = dir > 0 ? -80 : 80;
+    const enterX = dir > 0 ? 60 : -60;
 
     if (oldIndex >= 0 && oldIndex !== newIndex) {
         const oldTruck = trucks[oldIndex];
         tl.to(oldTruck, {
-            xPercent: -65, yPercent: -50, scale: 0.4, opacity: 0,
-            duration: 0.7, ease: 'power4.in'
+            xPercent: exitX, yPercent: -50, scale: 0.35, opacity: 0,
+            rotation: dir > 0 ? -3 : 3,
+            duration: 0.9, ease: 'power3.inOut'
         }, 0);
     }
 
     tl.fromTo(newTruck,
-        { xPercent: 40, yPercent: -50, scale: 0.5, opacity: 0 },
-        { xPercent: -50, yPercent: -50, scale: 1, opacity: 1, duration: 1.1, ease: 'power4.out' },
-        oldIndex >= 0 ? 0.15 : 0
+        { xPercent: enterX, yPercent: -50, scale: 0.45, opacity: 0, rotation: dir > 0 ? 3 : -3 },
+        { xPercent: -50, yPercent: -50, scale: 1, opacity: 1, rotation: 0,
+          duration: 1.3, ease: 'expo.out' },
+        oldIndex >= 0 ? 0.2 : 0
     );
 
     return tl;
@@ -106,35 +110,69 @@ function truckTransition(newIndex, oldIndex) {
 
 // ============ BACKGROUND MORPH ============
 function morphBackground(bg) {
-    gsap.to(heroState, { background: bg, duration: 1.0, ease: 'power2.inOut' });
+    gsap.to(heroState, { background: bg, duration: 1.4, ease: 'power3.inOut' });
+}
+
+// ============ TEXT TRANSITION ============
+function swapText(dir) {
+    const s = STATES[currentIndex];
+    const yOut = dir > 0 ? -30 : 30;
+    const yIn  = dir > 0 ? 30 : -30;
+
+    gsap.to(heroTitle, {
+        opacity: 0, y: yOut, duration: 0.35, ease: 'power2.in',
+        onComplete: () => {
+            heroTitle.innerHTML = s.title;
+            gsap.fromTo(heroTitle,
+                { opacity: 0, y: yIn },
+                { opacity: 1, y: 0, duration: 0.6, ease: 'expo.out' }
+            );
+        }
+    });
+    gsap.to(heroSubtitle, {
+        opacity: 0, y: yOut * 0.5, duration: 0.3, ease: 'power2.in',
+        onComplete: () => {
+            heroSubtitle.textContent = s.sub;
+            gsap.fromTo(heroSubtitle,
+                { opacity: 0, y: yIn * 0.5 },
+                { opacity: s.sub ? 0.55 : 0, y: 0, duration: 0.5, ease: 'expo.out', delay: 0.05 }
+            );
+        }
+    });
 }
 
 // ============ SLIDE NUMBER COUNTER ============
-function animateSlideNum(num) {
+function animateSlideNum(num, dir) {
+    const yOut = dir > 0 ? -15 : 15;
+    const yIn  = dir > 0 ? 15 : -15;
     gsap.to(slideNum, {
-        opacity: 0, y: -10, duration: 0.15,
+        opacity: 0, y: yOut, duration: 0.2, ease: 'power2.in',
         onComplete: () => {
             slideNum.textContent = String(num).padStart(2, '0');
-            gsap.to(slideNum, { opacity: 1, y: 0, duration: 0.2 });
+            gsap.fromTo(slideNum,
+                { opacity: 0, y: yIn },
+                { opacity: 1, y: 0, duration: 0.35, ease: 'expo.out' }
+            );
         }
     });
 }
 
 // ============ GO TO STATE ============
 let heroEntered = false;
-const COOLDOWN = 400;
+const COOLDOWN = 350;
 
 function unlock() {
     setTimeout(() => { transitioning = false; }, COOLDOWN);
 }
 
-function goTo(index) {
-    // Never go back to splash once hero is entered
+function goTo(index, dir) {
     if (heroEntered && index < 1) return;
     if (index < 0 || index >= STATES.length) return;
     if (transitioning) return;
 
     transitioning = true;
+    direction = dir || (index > currentIndex ? 1 : -1);
+
     const prevIndex = currentIndex;
     currentIndex = index;
     const s = STATES[currentIndex];
@@ -155,73 +193,56 @@ function goTo(index) {
     if (s.type === 'hero') {
         morphBackground(s.bg);
 
-        // Swap title/subtitle text with fade
-        if (heroEntered && (s.title || s.sub !== undefined)) {
-            gsap.to(heroTitle, {
-                opacity: 0, y: -10, duration: 0.25,
-                onComplete: () => {
-                    heroTitle.innerHTML = s.title;
-                    gsap.to(heroTitle, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' });
-                }
-            });
-            gsap.to(heroSubtitle, {
-                opacity: 0, duration: 0.2,
-                onComplete: () => {
-                    heroSubtitle.textContent = s.sub;
-                    gsap.to(heroSubtitle, { opacity: s.sub ? 0.55 : 0, duration: 0.3 });
-                }
-            });
+        // Swap title/subtitle with directional fade
+        if (heroEntered) {
+            swapText(direction);
         }
 
         if (!heroEntered) {
             heroEntered = true;
             heroTitle.innerHTML = s.title;
             heroSubtitle.textContent = s.sub;
-            const masterTl = gsap.timeline({
-                onComplete: unlock
-            });
+            const masterTl = gsap.timeline({ onComplete: unlock });
             masterTl.add(heroEntrance())
-                    .add(truckTransition(s.truck, -1), '-=0.6');
+                    .add(truckTransition(s.truck, -1, direction), '-=0.8');
         } else {
-            const tl = truckTransition(s.truck, prevTruckIndex);
+            const tl = truckTransition(s.truck, prevTruckIndex, direction);
             tl.eventCallback('onComplete', unlock);
         }
 
         prevTruckIndex = s.truck;
-        animateSlideNum(s.truck + 1);
-        return; // timeline handles the lock
+        animateSlideNum(s.truck + 1, direction);
+        return;
     }
 
-    // Fallback for section transitions (splash→hero fade)
-    setTimeout(unlock, 1000);
+    setTimeout(unlock, 1200);
 }
 
-// ============ GSAP OBSERVER — replaces manual wheel/touch listeners ============
+// ============ GSAP OBSERVER ============
 Observer.create({
     target: document.getElementById('container'),
     type: 'wheel,touch,pointer',
     tolerance: 30,
     dragMinimum: 15,
     preventDefault: true,
-    onDown: () => goTo(currentIndex + 1),
-    onUp: () => goTo(currentIndex - 1)
+    onUp:   () => goTo(currentIndex + 1, 1),    // swipe up / scroll down = NEXT
+    onDown: () => goTo(currentIndex - 1, -1)    // swipe down / scroll up = PREV
 });
 
-// ============ SPLASH CLICK (skip fill animation) ============
+// ============ SPLASH CLICK ============
 splashState.addEventListener('click', () => {
-    splashTl.progress(1); // instantly finish fill
-    goTo(1);
+    splashTl.progress(1);
+    goTo(1, 1);
 });
 
 // ============ ARROW BUTTONS ============
-document.querySelector('.nav-arrow.next').addEventListener('click', () => goTo(currentIndex + 1));
-document.querySelector('.nav-arrow.prev').addEventListener('click', () => goTo(currentIndex - 1));
-
+document.querySelector('.nav-arrow.next').addEventListener('click', () => goTo(currentIndex + 1, 1));
+document.querySelector('.nav-arrow.prev').addEventListener('click', () => goTo(currentIndex - 1, -1));
 
 // ============ KEYBOARD ============
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') goTo(currentIndex + 1);
-    if (e.key === 'ArrowUp'   || e.key === 'ArrowLeft')  goTo(currentIndex - 1);
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') goTo(currentIndex + 1, 1);
+    if (e.key === 'ArrowUp'   || e.key === 'ArrowLeft')  goTo(currentIndex - 1, -1);
 });
 
 // ============ INIT ============
