@@ -122,7 +122,7 @@ function animateSlideNum(num) {
 
 // ============ GO TO STATE ============
 let heroEntered = false;
-const COOLDOWN = 400; // ms buffer after animation to absorb trackpad momentum
+const COOLDOWN = 600; // ms buffer after animation to absorb trackpad/touch momentum
 
 function unlock() {
     // Delay unlock so trackpad momentum doesn't trigger the next state
@@ -199,11 +199,12 @@ function goTo(index) {
 
 // ============ GSAP OBSERVER — replaces manual wheel/touch listeners ============
 Observer.create({
-    type: 'wheel',
-    tolerance: 50,
+    type: 'wheel,touch',
+    tolerance: 80,
+    dragMinimum: 30,
     preventDefault: true,
-    onDown: () => goTo(currentIndex + 1),   // scroll down = next
-    onUp: () => goTo(currentIndex - 1)      // scroll up = previous
+    onDown: () => goTo(currentIndex + 1),   // scroll/drag down = next
+    onUp: () => goTo(currentIndex - 1)      // scroll/drag up = previous
 });
 
 // ============ SPLASH CLICK (skip fill animation) ============
