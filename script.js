@@ -130,6 +130,8 @@ function unlock() {
 }
 
 function goTo(index) {
+    // Never go back to splash once hero is entered
+    if (heroEntered && index < 1) return;
     if (index < 0 || index >= STATES.length) return;
     if (transitioning) return;
 
@@ -197,7 +199,7 @@ function goTo(index) {
 
 // ============ GSAP OBSERVER — replaces manual wheel/touch listeners ============
 Observer.create({
-    type: 'wheel,touch',
+    type: 'wheel',
     tolerance: 50,
     preventDefault: true,
     onDown: () => goTo(currentIndex + 1),   // scroll down = next
