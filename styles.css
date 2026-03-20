@@ -111,10 +111,14 @@ img{max-width:100%;display:block}
     width:85%;max-width:1100px;
     object-fit:contain;
     will-change: transform, opacity;
-    filter:drop-shadow(0 18px 50px rgba(0,0,0,.5));
     -webkit-backface-visibility:hidden;
     backface-visibility:hidden;
-    transform-style:preserve-3d;
+    -webkit-transform:translateZ(0);
+    transform:translateZ(0);
+}
+/* Shadow only on visible (non-animating) trucks via class */
+.truck.show-shadow{
+    filter:drop-shadow(0 18px 50px rgba(0,0,0,.5));
 }
 
 /* Smaller trucks — image 2, 4, 5 */
@@ -261,6 +265,8 @@ img{max-width:100%;display:block}
     .truck-area{flex:1;min-height:0;overflow:hidden;position:relative}
     .truck-images{position:absolute;inset:0}
     .truck{width:85%!important;max-width:none!important;top:35%!important;left:50%!important}
+    /* No drop-shadow on mobile — major GPU perf boost */
+    .truck.show-shadow{filter:none}
     .truck[data-index="1"],
     .truck[data-index="3"],
     .truck[data-index="4"]{width:70%!important}

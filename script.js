@@ -33,8 +33,8 @@ const splashFill   = document.getElementById('splashFill');
 const container    = document.getElementById('container');
 
 // ============ INITIAL SETUP ============
-gsap.set(trucks, { xPercent: 40, yPercent: -50, scale: 0.5, autoAlpha: 0, top: '50%', left: '50%' });
-gsap.set([heroTitle, heroSubtitle], { y: 50, autoAlpha: 0 });
+gsap.set(trucks, { xPercent: 40, yPercent: -50, scale: 0.5, autoAlpha: 0, top: '50%', left: '50%', force3d: true });
+gsap.set([heroTitle, heroSubtitle], { y: 50, autoAlpha: 0, force3d: true });
 gsap.set([heroDesc, buyBtn], { y: 25, autoAlpha: 0 });
 gsap.set(navbar, { y: -35, autoAlpha: 0 });
 gsap.set(heroStats, { scale: 0, autoAlpha: 0 });
@@ -84,23 +84,31 @@ function heroEntrance() {
 function truckTransition(newIndex, oldIndex, dir) {
     const tl = gsap.timeline();
     const newTruck = trucks[newIndex];
-    const exitX = dir > 0 ? -70 : 70;
-    const enterX = dir > 0 ? 55 : -55;
+    const exitX = dir > 0 ? -60 : 60;
+    const enterX = dir > 0 ? 50 : -50;
 
     if (oldIndex >= 0 && oldIndex !== newIndex) {
         const oldTruck = trucks[oldIndex];
+        // Remove shadow before animating (GPU perf)
+        oldTruck.classList.remove('show-shadow');
         tl.to(oldTruck, {
-            xPercent: exitX, yPercent: -50, scale: 0.4, autoAlpha: 0,
-            rotation: dir > 0 ? -2 : 2,
-            duration: 0.8, ease: 'power2.inOut'
+            xPercent: exitX, yPercent: -50, scale: 0.45, autoAlpha: 0,
+            duration: 0.7, ease: 'power3.in', force3d: true
         }, 0);
     }
 
+    // New truck enters without shadow
+    newTruck.classList.remove('show-shadow');
     tl.fromTo(newTruck,
-        { xPercent: enterX, yPercent: -50, scale: 0.5, autoAlpha: 0, rotation: dir > 0 ? 2 : -2 },
-        { xPercent: -50, yPercent: -50, scale: 1, autoAlpha: 1, rotation: 0,
-          duration: 1.2, ease: 'expo.out' },
-        oldIndex >= 0 ? 0.15 : 0
+        { xPercent: enterX, yPercent: -50, scale: 0.55, autoAlpha: 0 },
+        { xPercent: -50, yPercent: -50, scale: 1, autoAlpha: 1,
+          duration: 1.0, ease: 'expo.out', force3d: true,
+          onComplete: () => {
+              // Add shadow back AFTER animation settles
+              newTruck.classList.add('show-shadow');
+          }
+        },
+        oldIndex >= 0 ? 0.12 : 0
     );
 
     return tl;
@@ -114,26 +122,26 @@ function morphBackground(bg) {
 // ============ TEXT TRANSITION ============
 function swapText(dir) {
     const s = STATES[currentIndex];
-    const yOut = dir > 0 ? -25 : 25;
-    const yIn  = dir > 0 ? 25 : -25;
+    const yOut = dir > 0 ? -20 : 20;
+    const yIn  = dir > 0 ? 20 : -20;
 
     gsap.to(heroTitle, {
-        autoAlpha: 0, y: yOut, duration: 0.3, ease: 'power2.in',
+        autoAlpha: 0, y: yOut, duration: 0.25, ease: 'power2.in', force3d: true,
         onComplete: () => {
             heroTitle.innerHTML = s.title;
             gsap.fromTo(heroTitle,
                 { autoAlpha: 0, y: yIn },
-                { autoAlpha: 1, y: 0, duration: 0.55, ease: 'expo.out' }
+                { autoAlpha: 1, y: 0, duration: 0.5, ease: 'expo.out', force3d: true }
             );
         }
     });
     gsap.to(heroSubtitle, {
-        autoAlpha: 0, y: yOut * 0.4, duration: 0.25, ease: 'power2.in',
+        autoAlpha: 0, y: yOut * 0.4, duration: 0.2, ease: 'power2.in',
         onComplete: () => {
             heroSubtitle.textContent = s.sub;
             gsap.fromTo(heroSubtitle,
                 { autoAlpha: 0, y: yIn * 0.4 },
-                { autoAlpha: s.sub ? 0.55 : 0, y: 0, duration: 0.45, ease: 'expo.out', delay: 0.04 }
+                { autoAlpha: s.sub ? 0.55 : 0, y: 0, duration: 0.4, ease: 'expo.out', delay: 0.03 }
             );
         }
     });
@@ -144,19 +152,19 @@ function animateSlideNum(num, dir) {
     const yOut = dir > 0 ? -12 : 12;
     const yIn  = dir > 0 ? 12 : -12;
     gsap.to(slideNum, {
-        autoAlpha: 0, y: yOut, duration: 0.18, ease: 'power2.in',
+        autoAlpha: 0, y: yOut, duration: 0.15, ease: 'power2.in',
         onComplete: () => {
             slideNum.textContent = String(num).padStart(2, '0');
             gsap.fromTo(slideNum,
                 { autoAlpha: 0, y: yIn },
-                { autoAlpha: 1, y: 0, duration: 0.3, ease: 'expo.out' }
+                { autoAlpha: 1, y: 0, duration: 0.25, ease: 'expo.out' }
             );
         }
     });
 }
 
-// ============ DELAYED UNLOCK (absorb trackpad/touch momentum) ============
-const unlockCall = gsap.delayedCall(0.35, () => { animating = false; }).pause();
+// ============ UNLOCK ============
+const unlockCall = gsap.delayedCall(0.2, () => { animating = false; }).pause();
 
 function unlock() {
     unlockCall.restart(true);
@@ -176,12 +184,10 @@ function goTo(index, dir) {
     const s = STATES[currentIndex];
     const prevState = STATES[prevIndex];
 
-    // Hide previous state if different section
     if (prevState.id !== s.id) {
         hideState(document.getElementById(prevState.id));
     }
 
-    // Show target state
     if (prevState.id !== s.id) {
         showState(document.getElementById(s.id));
     }
@@ -210,7 +216,6 @@ function goTo(index, dir) {
         return;
     }
 
-    // Fallback (splash → hero)
     gsap.delayedCall(1.0, () => { animating = false; });
 }
 
@@ -218,9 +223,9 @@ function goTo(index, dir) {
 function goNext() { if (!animating) goTo(currentIndex + 1, 1); }
 function goPrev() { if (!animating) goTo(currentIndex - 1, -1); }
 
-// ============ GSAP OBSERVER — TWO INSTANCES (wheel + touch separated) ============
+// ============ GSAP OBSERVER — TWO INSTANCES ============
 
-// Wheel observer (desktop) — higher tolerance for trackpad momentum
+// Wheel (desktop/trackpad)
 Observer.create({
     target: container,
     type: 'wheel',
@@ -231,12 +236,12 @@ Observer.create({
     onUp:   () => goNext()
 });
 
-// Touch observer (mobile/tablet) — low tolerance for responsive feel
+// Touch (mobile/tablet) — minimal tolerance for instant response
 Observer.create({
     target: container,
     type: 'touch',
-    tolerance: 3,
-    dragMinimum: 4,
+    tolerance: 1,
+    dragMinimum: 3,
     preventDefault: true,
     onDown: () => goPrev(),
     onUp:   () => goNext()
