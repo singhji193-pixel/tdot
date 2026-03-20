@@ -1,0 +1,289 @@
+/* ============ RESET ============ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:#000}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;outline:none;font-family:inherit;background:none}
+img{max-width:100%;display:block}
+
+/* ============ PAGE ============ */
+.page-bg{
+    width:100%;height:100%;
+    display:flex;align-items:center;justify-content:center;
+    background:#080808;padding:16px;
+}
+
+/* ============ CONTAINER ============ */
+.container{
+    width:100%;max-width:1400px;
+    height:100%;max-height:900px;
+    border-radius:20px;
+    overflow:hidden;
+    position:relative;
+    background:#0d0d0d;
+    box-shadow:0 0 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.03);
+}
+
+/* ============ STATES ============ */
+.state{
+    position:absolute;
+    inset:0;
+    display:flex;
+    opacity:0;
+    pointer-events:none;
+    transform: scale(0.97);
+    will-change: opacity, transform;
+}
+
+/* ============ SPLASH ============ */
+.splash-state{
+    background:#0a0a0a;
+    align-items:center;justify-content:center;
+}
+.splash-logo-wrap{
+    position:relative;
+    width:clamp(140px,22vw,280px);
+}
+.splash-logo{
+    display:block;
+    width:100%;height:auto;
+    object-fit:contain;
+}
+.splash-logo-outline{
+    opacity:0.12;
+}
+.splash-logo-fill{
+    position:absolute;
+    top:0;left:0;
+    opacity:1;
+    clip-path:inset(0 100% 0 0);
+    will-change:clip-path;
+}
+
+/* ============ HERO ============ */
+.hero-state{
+    flex-direction:column;
+    padding:22px 48px 26px;
+    color:#fff;
+    background:#0d0d0d;
+    will-change: background;
+}
+
+/* Navbar */
+.navbar{display:flex;align-items:center;justify-content:space-between;flex-shrink:0;z-index:10}
+.nav-logo{display:flex;align-items:center}
+.nav-logo-img{height:30px;width:auto;object-fit:contain}
+.nav-links{display:flex;background:rgba(255,255,255,.08);border-radius:30px;padding:3px;backdrop-filter:blur(8px)}
+.nav-link{padding:7px 17px;border-radius:25px;font-size:11.5px;color:rgba(255,255,255,.55);transition:.3s}
+.nav-link.active{background:rgba(255,255,255,.14);color:#fff}
+.nav-link:hover{color:#fff}
+.nav-right{display:flex;align-items:center;gap:16px}
+.nav-phone{display:flex;align-items:center;gap:6px;font-size:12px;opacity:.65;color:#fff;text-decoration:none;transition:.3s}
+.nav-phone:hover{opacity:1}
+.nav-ig{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.08);color:rgba(255,255,255,.55);text-decoration:none;transition:background .3s,color .3s,transform .3s}
+.nav-ig:hover{background:rgba(255,255,255,.15);color:#fff;transform:scale(1.1)}
+
+/* Hero body */
+.hero-body{display:flex;justify-content:space-between;align-items:flex-start;margin-top:24px;flex-shrink:0;z-index:5}
+.hero-title{
+    font-size:clamp(32px,4.5vw,52px);font-weight:700;line-height:1.1;letter-spacing:-1px;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+}
+.hero-subtitle{font-size:12px;font-weight:300;margin-top:10px;opacity:.55}
+.hero-stats{display:flex;gap:18px;margin-top:6px}
+.hero-stat{
+    display:flex;flex-direction:column;align-items:center;gap:2px;
+    padding:8px 14px;border-radius:12px;
+    border:1px solid rgba(255,255,255,.1);
+    background:rgba(255,255,255,.04);
+    will-change:transform;
+}
+.stat-num{color:#fff;font-size:16px;font-weight:700;letter-spacing:0.5px}
+.stat-num small{font-size:10px;font-weight:400;opacity:.6}
+.stat-label{color:rgba(255,255,255,.4);font-size:8px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase}
+
+/* Truck area */
+.truck-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:0;z-index:3;position:relative}
+.truck-images{position:relative;width:100%;height:100%;z-index:2}
+.truck{
+    position:absolute;
+    top:50%;left:50%;
+    width:85%;max-width:1100px;
+    object-fit:contain;
+    will-change: transform, opacity;
+    filter:drop-shadow(0 18px 50px rgba(0,0,0,.5));
+}
+
+/* Smaller trucks — image 2, 4, 5 */
+.truck[data-index="1"],
+.truck[data-index="3"],
+.truck[data-index="4"]{
+    width:70%;max-width:850px;
+}
+
+/* Orbit arc */
+.orbit{
+    position:absolute;
+    bottom:0;left:50%;transform:translateX(-50%);
+    width:90%;max-width:1100px;
+    height:200px;
+    z-index:1;
+    pointer-events:none;
+    will-change: opacity, transform;
+}
+.orbit-svg{width:100%;height:100%}
+.orbit-dot{
+    position:absolute;bottom:30px;left:50%;transform:translateX(-50%);
+    width:28px;height:28px;border-radius:50%;
+    background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.18);
+    display:flex;align-items:center;justify-content:center;
+}
+.orbit-dot::after{content:'';width:5px;height:5px;background:rgba(255,255,255,.4);border-radius:50%}
+
+/* Hero bottom */
+.hero-bottom{display:flex;justify-content:space-between;align-items:flex-end;flex-shrink:0;z-index:5}
+.hero-desc{font-size:10px;line-height:1.6;opacity:.35;font-weight:300}
+.hero-controls{display:flex;align-items:center;gap:18px}
+.slide-nav{display:flex;align-items:center;gap:12px}
+.nav-arrow{
+    width:28px;height:28px;border-radius:50%;
+    border:1px solid rgba(255,255,255,.18);color:#fff;
+    display:flex;align-items:center;justify-content:center;transition:.3s;
+}
+.nav-arrow:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.3)}
+.slide-num{font-size:13px;font-weight:500;min-width:20px;text-align:center}
+.buy-btn{
+    padding:9px 22px;border-radius:25px;font-size:11.5px;font-weight:500;
+    background:#fff;color:#0d0d0d;transition: background 0.3s, box-shadow 0.3s;
+    box-shadow: 0 4px 15px rgba(255,255,255,0.1);
+}
+.buy-btn:hover{background:#e0e0e0;box-shadow: 0 6px 20px rgba(255,255,255,0.15)}
+
+/* ============ PRODUCT ============ */
+.product-state{background:#f5f5f5;color:#0d0d0d}
+.product-layout{display:flex;width:100%;height:100%;align-items:center;padding:50px 48px}
+.product-left{flex:0 0 42%;padding-right:24px}
+.product-title{font-size:clamp(56px,6.5vw,88px);font-weight:900;line-height:.92;letter-spacing:-3px;will-change:transform,opacity}
+.product-desc{font-size:11.5px;line-height:1.7;color:#555;margin-top:20px;max-width:320px;will-change:transform,opacity}
+.buy-btn.dark{background:#0d0d0d;color:#fff;margin-top:20px;display:inline-block;box-shadow: 0 4px 15px rgba(0,0,0,0.2)}
+.buy-btn.dark:hover{background:#333;box-shadow: 0 6px 20px rgba(0,0,0,0.3)}
+.page-dots{display:flex;flex-direction:column;gap:7px;margin-top:36px}
+.dot{width:26px;height:2px;background:#ccc;border-radius:2px;transition:.3s}
+.dot.active{background:#0d0d0d;width:40px}
+.product-right{flex:0 0 58%;display:flex;align-items:center;justify-content:center}
+.product-truck{width:82%;max-width:560px;object-fit:contain;filter:drop-shadow(0 12px 24px rgba(0,0,0,.1));will-change:transform,opacity}
+
+/* ============ QUALITY ============ */
+.quality-state{background:#f0f0f0;color:#0d0d0d}
+.quality-layout{display:flex;width:100%;height:100%;align-items:center;padding:50px 48px;position:relative}
+.swoosh-bg{position:absolute;top:50%;left:42%;transform:translate(-50%,-50%);width:400px;opacity:.5;z-index:0}
+.swoosh-bg svg{width:100%;height:auto}
+.quality-left{flex:0 0 58%;position:relative;z-index:1}
+.top-dots{margin-bottom:16px}
+.quality-truck-wrap{position:relative;max-width:500px;margin:0 auto}
+.quality-truck{width:100%;object-fit:contain;filter:drop-shadow(0 8px 16px rgba(0,0,0,.07));will-change:transform,opacity}
+
+/* Labels */
+.label{position:absolute;display:flex;align-items:center;gap:5px;white-space:nowrap;will-change:transform,opacity}
+.label-dot{width:7px;height:7px;background:#0d0d0d;border-radius:50%;flex-shrink:0}
+.label-line{width:32px;height:1px;background:#999;flex-shrink:0}
+.label-text{font-size:10.5px;font-weight:500;color:#333}
+.l1{top:0%;left:42%}
+.l2{top:17%;left:23%}
+.l3{top:38%;left:-8%}
+.l4{top:32%;right:-10%}
+.l5{top:50%;right:-10%}
+.l6{top:66%;right:0%}
+.l7{top:82%;right:6%}
+
+.quality-right{flex:0 0 42%;display:flex;align-items:center;justify-content:flex-end;z-index:1}
+.quality-title{font-size:clamp(44px,5vw,64px);font-weight:900;line-height:1.05;letter-spacing:-2px;text-align:right;will-change:transform,opacity}
+
+/* ============ HAMBURGER ============ */
+.hamburger{
+    display:none;width:28px;height:28px;
+    flex-direction:column;align-items:center;justify-content:center;gap:5px;
+    cursor:pointer;z-index:100;background:none;border:none;padding:0;
+}
+.hamburger span{
+    display:block;width:20px;height:2px;background:#fff;border-radius:2px;
+    transition:transform 0.3s, opacity 0.3s;
+}
+.hamburger.active span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamburger.active span:nth-child(2){opacity:0}
+.hamburger.active span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* Mobile nav overlay */
+.mobile-nav{
+    display:none;position:fixed;inset:0;z-index:90;
+    background:rgba(13,13,13,0.97);backdrop-filter:blur(20px);
+    flex-direction:column;align-items:center;justify-content:center;gap:24px;
+    opacity:0;pointer-events:none;transition:opacity 0.3s;
+}
+.mobile-nav.open{display:flex;opacity:1;pointer-events:auto}
+.mobile-nav a{
+    font-size:18px;font-weight:600;color:#fff;text-decoration:none;
+    opacity:0.6;transition:opacity 0.3s, transform 0.3s;
+}
+.mobile-nav a:hover,.mobile-nav a.active{opacity:1}
+.mobile-nav .mobile-phone{
+    margin-top:20px;font-size:14px;color:#fff;opacity:0.5;
+    display:flex;align-items:center;gap:8px;text-decoration:none;
+}
+.mobile-nav .mobile-ig{
+    font-size:14px;color:#fff;opacity:0.5;
+    display:flex;align-items:center;gap:8px;text-decoration:none;
+    transition:opacity 0.3s;
+}
+.mobile-nav .mobile-ig:hover{opacity:1}
+
+/* Mobile CTA — hidden on desktop */
+.mobile-cta-btn{display:none}
+
+/* ============ RESPONSIVE ============ */
+@media(max-width:900px){
+    .page-bg{padding:8px}
+    .container{border-radius:14px;max-height:none;height:100%}
+    .hero-state{padding:14px 16px 14px}
+    .nav-links{display:none}
+    .nav-right{display:none}
+    .hamburger{display:flex}
+
+    /* Stack hero body vertically */
+    .hero-body{flex-direction:column;gap:12px;margin-top:24px}
+    .hero-title{font-size:clamp(24px,7vw,32px)}
+    .hero-subtitle{font-size:11px;margin-top:10px}
+
+    /* Stats row below title */
+    .hero-stats{gap:8px;margin-top:0;width:100%;justify-content:flex-start}
+    .hero-stat{padding:6px 10px;border-radius:10px}
+    .stat-num{font-size:14px}
+    .stat-label{font-size:7px;letter-spacing:1px}
+
+    /* Truck area — contained */
+    .truck-area{flex:1;min-height:0;overflow:hidden;position:relative}
+    .truck-images{position:absolute;inset:0}
+    .truck{width:85%!important;max-width:none!important;top:35%!important;left:50%!important}
+    .truck[data-index="1"],
+    .truck[data-index="3"],
+    .truck[data-index="4"]{width:70%!important}
+    .orbit{width:95%;height:120px;bottom:auto;top:28%}
+    .orbit-dot{display:none}
+
+    /* Hide bottom controls on mobile — swipe navigates trucks */
+    .hero-bottom{display:none}
+    /* Mobile CTA button */
+    .mobile-cta-btn{
+        display:inline-block;margin-top:16px;
+        padding:12px 28px;border-radius:25px;
+        background:#fff;color:#0d0d0d;font-size:12px;font-weight:600;
+        text-decoration:none;
+        box-shadow:0 4px 15px rgba(255,255,255,0.1);
+        transition:background 0.3s,transform 0.3s;
+    }
+    .mobile-cta-btn:active{transform:scale(0.95);background:#e0e0e0}
+    .hero-desc{display:none}
+    .hero-controls{width:100%;justify-content:space-between}
+    .buy-btn{padding:10px 22px;font-size:12px}
+    .nav-arrow{width:28px;height:28px}
+    .slide-num{font-size:13px}
+}
