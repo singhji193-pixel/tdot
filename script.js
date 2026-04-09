@@ -100,8 +100,7 @@ function truckTransition(newIndex, oldIndex, dir) {
         oldTruck.classList.remove('show-shadow');
         tl.to(oldTruck, {
             xPercent: exitX, yPercent: -50, scale: 0.5, autoAlpha: 0,
-            duration: 0.55, ease: 'power3.in', force3d: true
-        }, 0);
+            duration: 0.55, ease: 'power3.in'        }, 0);
     }
 
     newTruck.classList.remove('show-shadow');
