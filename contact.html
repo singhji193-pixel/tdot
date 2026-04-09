@@ -230,10 +230,31 @@
         btnText.style.display='none';
         btnLoad.style.display='inline';
         btn.disabled=true;
-        setTimeout(()=>{
+
+        const payload = {
+            fullName: document.getElementById('fullName').value,
+            email: document.getElementById('email').value,
+            phone: document.getElementById('phone').value,
+            service: document.getElementById('service').value,
+            message: document.getElementById('message').value,
+            pageUrl: window.location.href,
+            submittedAt: new Date().toISOString()
+        };
+
+        fetch('https://n8n.coengine.ai/webhook/tdot-towing-contact', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(function(res){ return res.json(); })
+        .then(function(){
             document.getElementById('contactForm').style.display='none';
             document.getElementById('formSuccess').style.display='flex';
-        },1500);
+        })
+        .catch(function(){
+            document.getElementById('contactForm').style.display='none';
+            document.getElementById('formSuccess').style.display='flex';
+        });
     }
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
