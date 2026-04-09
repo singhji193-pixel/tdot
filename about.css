@@ -47,7 +47,7 @@
 }
 .about-hero-sub:hover{color:rgba(255,255,255,0.8)}
 .about-hero-img{
-    position:absolute;right:80px;bottom:-220px;
+    position:absolute;right:80px;bottom:-40px;
     width:58%;max-width:700px;opacity:0;
     z-index:0;
     transform:translateY(-80px);
