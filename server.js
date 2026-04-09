@@ -11,7 +11,9 @@ const MIME = {
     '.png': 'image/png',
     '.jpg': 'image/jpeg',
     '.json': 'application/json',
-    '.ico': 'image/x-icon'
+    '.ico': 'image/x-icon',
+    '.xml': 'application/xml',
+    '.txt': 'text/plain'
 };
 
 const server = http.createServer((req, res) => {
@@ -21,8 +23,10 @@ const server = http.createServer((req, res) => {
 
     fs.readFile(filePath, (err, content) => {
         if (err) {
-            res.writeHead(404);
-            res.end('Not found');
+            fs.readFile(path.join(__dirname, '404.html'), (err404, content404) => {
+                res.writeHead(404, { 'Content-Type': 'text/html' });
+                res.end(err404 ? 'Not found' : content404);
+            });
             return;
         }
         res.writeHead(200, { 'Content-Type': contentType });
