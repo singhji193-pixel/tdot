@@ -288,5 +288,30 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script src="services.js"></script>
+
+    <!-- Cookie Consent -->
+    <div class="cookie-banner" id="cookieBanner">
+        <div class="cookie-card">
+            <p class="cookie-text">We use cookies to improve your experience. <a href="privacy.html">Privacy Policy</a></p>
+            <div class="cookie-actions">
+                <button class="cookie-accept" onclick="cookieChoice('accepted')">Accept</button>
+                <button class="cookie-decline" onclick="cookieChoice('declined')">Decline</button>
+            </div>
+        </div>
+    </div>
+    <script>
+    (function(){
+        if(localStorage.getItem('tdot-cookies'))return;
+        setTimeout(function(){
+            document.getElementById('cookieBanner').classList.add('show');
+        },2000);
+    })();
+    function cookieChoice(c){
+        localStorage.setItem('tdot-cookies',c);
+        var b=document.getElementById('cookieBanner');
+        b.classList.remove('show');
+        setTimeout(function(){b.remove()},500);
+    }
+    </script>
 </body>
 </html>

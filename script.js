@@ -9,7 +9,8 @@ const STATES = [
     { id: 'heroState', type: 'hero', truck: 1, bg: 'linear-gradient(135deg,#2a0000,#6b1010,#4a0000)', title: 'Driven by Speed.<br>Defined by Service.', sub: 'Excellence in Every Mile' },
     { id: 'heroState', type: 'hero', truck: 2, bg: 'linear-gradient(135deg,#a04000,#d96a00,#c05500)', title: 'Flatbed Towing<br>Specialists', sub: 'Safe transport for luxury & exotic vehicles' },
     { id: 'heroState', type: 'hero', truck: 3, bg: 'linear-gradient(135deg,#904050,#c06070,#b04060)', title: 'Accident Recovery<br>& Roadside Help', sub: '24/7 Emergency Response Across the GTA' },
-    { id: 'heroState', type: 'hero', truck: 4, bg: 'linear-gradient(135deg,#0d0d0d,#1a1a2a,#0d0d0d)', title: 'Heavy-Duty<br>Commercial Towing', sub: 'RVs, buses & construction equipment' }
+    { id: 'heroState', type: 'hero', truck: 4, bg: 'linear-gradient(135deg,#0d0d0d,#1a1a2a,#0d0d0d)', title: 'Heavy-Duty<br>Commercial Towing', sub: 'RVs, buses & construction equipment' },
+    { id: 'connectState', type: 'connect' }
 ];
 
 let currentIndex = 0;
@@ -214,6 +215,20 @@ function goTo(index, dir) {
         prevTruckIndex = s.truck;
         animateSlideNum(s.truck + 1, dir);
         return;
+    }
+
+    // Connect state entrance animation
+    if (s.type === 'connect') {
+        const connectInner = document.querySelector('.connect-inner');
+        const connectBack = document.querySelector('.connect-back');
+        gsap.fromTo(connectInner,
+            { y: 40, autoAlpha: 0 },
+            { y: 0, autoAlpha: 1, duration: 0.8, ease: 'expo.out', delay: 0.3 }
+        );
+        gsap.fromTo(connectBack,
+            { x: -20, autoAlpha: 0 },
+            { x: 0, autoAlpha: 1, duration: 0.5, ease: 'expo.out', delay: 0.5 }
+        );
     }
 
     gsap.delayedCall(1.0, () => { animating = false; });
